@@ -6,6 +6,7 @@ class CampoInput extends StatelessWidget {
   final String textoLabel;
   final Icon iconeInput;
   final bool campoSenha;
+  final TextEditingController controller;
 
   const CampoInput(
       {super.key,
@@ -13,11 +14,14 @@ class CampoInput extends StatelessWidget {
       required this.textoHint,
       required this.textoLabel,
       required this.iconeInput,
-      required this.campoSenha});
+      required this.campoSenha,
+      required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      //Controller para acessar o EditText e poder editar o seu conteúdo
+      controller: controller,
       //Indicação se o campo é de senha ou não
       obscureText: campoSenha,
       //Configuração do texto interno

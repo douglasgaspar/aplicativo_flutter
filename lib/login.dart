@@ -1,7 +1,9 @@
+import 'package:app_completo/models/usuario.dart';
 import 'package:app_completo/tela_cadastro.dart';
 import 'package:app_completo/tela_esqueceu_senha.dart';
 import 'package:app_completo/valores.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 class TelaLogin extends StatefulWidget {
   const TelaLogin({super.key});
@@ -13,11 +15,13 @@ class TelaLogin extends StatefulWidget {
 class _TelaLoginState extends State<TelaLogin> {
   String? usuario;
   String? senha;
-
   bool senhaEscondida = true;
 
   @override
   Widget build(BuildContext context) {
+    SnackBar snackBar;
+    Usuario u;
+
     return Scaffold(
         backgroundColor: Valores.corFundo,
         //Ajuste da tela quando o teclado subir para digitar
@@ -186,7 +190,35 @@ class _TelaLoginState extends State<TelaLogin> {
                     children: [
                       Expanded(
                           child: ElevatedButton(
-                              onPressed: () => {},
+                              onPressed: () async => {
+                                    if (usuario!.isEmpty || senha!.isEmpty)
+                                      {
+                                        snackBar = const SnackBar(
+                                            content: Text(
+                                                "Preencha todos os campos")),
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar),
+                                      }
+                                    else
+                                      {
+                                        u = Usuario.login(usuario, senha),
+                                        if (await u.validarAcesso())
+                                          {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const EsqueceuSenha()))
+                                          }
+                                        else
+                                          {
+                                            snackBar = const SnackBar(
+                                                content: Text(
+                                                    "Usuário ou senha incorreta")),
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(snackBar),
+                                          }
+                                      }
+                                  },
                               child: const Text(
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                   "Acessar")))
