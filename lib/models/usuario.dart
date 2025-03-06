@@ -27,6 +27,9 @@ class Usuario {
   //Construtor para usar quando for fazer login do usuário
   Usuario.login(this.email, this.senha);
 
+  //Construtor para usar quando for alterar a senha
+  Usuario.alterarSenha(this.email, this.senha);
+
   //Construtor que será usado para receber dados em JSON e criar um usuário
   //Utilizado ao buscar todos os usuários
   Usuario.convertJson(Map<String, dynamic> conteudoJSON)
@@ -72,6 +75,27 @@ class Usuario {
   Future<bool> validarAcesso() async {
     final respostaBackend = await http.post(
       Uri.parse("${url}validarAcesso"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      //Monta os dados a ser enviado no Body
+      body: jsonEncode(<String, String>{
+        'email': email.toString(),
+        'senha': sha256.convert(utf8.encode(senha.toString())).toString()
+      }),
+    );
+    //Se retornou código 200, então cadastrou o produto
+    if (respostaBackend.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //Método utilizado quando o usuário pede para alterar a senha
+  Future<bool> atualizarSenha() async {
+    final respostaBackend = await http.put(
+      Uri.parse("${url}atualizarSenha"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
